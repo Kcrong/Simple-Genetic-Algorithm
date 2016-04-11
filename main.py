@@ -12,7 +12,7 @@ def rand(x, y): return int(uniform(x, y))
 
 
 # 원하는 값
-# WE_WANT = [0, 3, 7, 20, 8, 1, 5, 1, 2, 0, 1, 0, 1, 0]
+# WE_WANT = [0, 0, 1, 0, 1, 0, 0, 1, 0, 1]
 WE_WANT = [rand(0, 100) for i in range(10)]
 
 
