@@ -14,8 +14,12 @@ def rand(x, y): return int(uniform(x, y))
 # 원하는 값
 WE_WANT = [0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0]
 
+# 우월 유전자 보존 갯수
+GOOD_DNA_CNT = 10
 
-# WE_WANT = [rand(0, 100) for i in range(10)]
+# 돌연변이 확률은 fitness 와 반비례 한다.
+# fitness 가 높을 수록, 돌연변이 확률이 적어진다.
+MUTATION_PROBABILITY = 100
 
 
 class Generation:
@@ -51,10 +55,7 @@ class Generation:
         :return: Child Gene Object
         """
 
-        # 돌연변이 확률은 fitness 와 반비례 한다.
-        # fitness 가 높을 수록, 돌연변이 확률이 적어진다.
-        mutation_probability = 100
-        if rand(0, self.fitness * mutation_probability) == 0:
+        if rand(0, self.fitness * MUTATION_PROBABILITY) == 0:
             return DNA([rand(min(WE_WANT), max(WE_WANT)) for i in range(len(WE_WANT))])
 
         # 부모를 select_list 를 이용해 정함.
@@ -100,9 +101,7 @@ class Generation:
     def evolution(self):
         print("Start Evolution Generation level %d" % Generation.cnt)
 
-        # 우월 유전자 보존 갯수
-        good_dna_cnt = 10
-        dna_list = [self.best for i in range(good_dna_cnt)]
+        dna_list = [self.best for i in range(GOOD_DNA_CNT)]
         dna_list += [self.make_child() for i in range(len(self.DNA_list) - len(dna_list))]
 
         return Generation(dna_list)
