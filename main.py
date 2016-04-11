@@ -16,6 +16,9 @@ def rand(x, y): return int(uniform(x, y))
 WE_WANT = [rand(0, 100) for i in range(10)]
 
 
+# WE_WANT = [rand(0, 100) for i in range(10)]
+
+
 class Generation:
     cnt = 0
 
@@ -51,7 +54,7 @@ class Generation:
 
         # 돌연변이 확률은 fitness 와 반비례 한다.
         # fitness 가 높을 수록, 돌연변이 확률이 적어진다.
-        if rand(0, self.fitness * 100) == 0:
+        if rand(0, self.fitness * 10) == 0:
             return DNA([rand(min(WE_WANT), max(WE_WANT)) for i in range(len(WE_WANT))])
 
         # 부모를 select_list 를 이용해 정함.
@@ -96,7 +99,11 @@ class Generation:
 
     def evolution(self):
         print("Start Evolution Generation level %d" % Generation.cnt)
-        return Generation([self.make_child() for i in range(len(self.DNA_list))])
+
+        dna_list = [self.best for i in range(10)]
+        dna_list += [self.make_child() for i in range(len(self.DNA_list) - len(dna_list))]
+
+        return Generation(dna_list)
 
     @property
     def fitness(self):
@@ -119,6 +126,13 @@ class DNA:
     def __repr__(self):
         return "< Gene %s | %d >" % ("_".join(str(x) for x in self.gene_data), self.fitness)
 
+    @staticmethod
+    def max_fitness():
+        if max(WE_WANT) < 2:
+            return len(WE_WANT) * max(WE_WANT)
+        else:
+            return len(WE_WANT) * (max(WE_WANT) // 2)
+
     @property
     def fitness(self) -> int:
         """
@@ -126,7 +140,7 @@ class DNA:
         :return: 적합도 값
         """
 
-        score = len(WE_WANT) * (max(WE_WANT)//2)
+        score = DNA.max_fitness()
 
         for gene, want in zip(self.gene_data, WE_WANT):
             if gene != want:
@@ -136,18 +150,22 @@ class DNA:
 
 
 def visualization(generations):
-    # 각 세대의 (평균) 적합도를 이용해 시각화
-    plot([generation.fitness for generation in generations])
-
-    # 각 축의 lim 값을 데이터 보다 높게 잡아줌으로써, 가독성을 높임
-    xlim([0, int(len(generations) * 1.01)])  # 세대 수 + 1%
+    xlim([0, len(generations)])
 
     fitness_list = [generation.fitness for generation in generations]
 
-    ylim([int(min(fitness_list)), int(max(fitness_list) * 1.01)])  # 가장 높은 적합도 + 1%
+    # 축의 lim 값을 데이터 보다 높게 잡아줌으로써, 가독성을 높임
+    ylim([int(min(fitness_list)), int(max(fitness_list) * 1.2)])
+
+    # 최대 적합도를 그래프에 나타냄
+    max_fitness = DNA.max_fitness()
+    plot([max_fitness for i in range(len(generations))])
 
     xlabel('Generation')
     ylabel('Fitness Score')
+
+    # 각 세대의 (평균) 적합도를 이용해 그래프에 나타냄
+    plot([generation.fitness for generation in generations])
 
     show()
 
