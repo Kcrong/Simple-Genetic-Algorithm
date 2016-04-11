@@ -42,6 +42,49 @@ class Generation:
 
         return tmp_list
 
+    def make_child(self):
+        """
+        :return: Child Gene Object
+        """
+
+        # 부모를 select_list 를 이용해 정함.
+        # 부모로 선출될 확률은 fitness 과 비례한다.
+        parents = (self.select_list[rand(0, len(self.select_list))] for i in range(2))
+
+        # 자식 유전자
+        gene_data = list()
+
+        # 유전자 정보 길이
+        gene_len = len(parents[0].gene_data)
+
+        # 각 교차 포인트를 정한다.
+        # rand 함수의 반환이 float 형이므로, 소수점을 버리기 위해 int() 형변한을 해준다.
+        switch_point = (rand(1, gene_len), rand(2, gene_len))
+
+        # 처음 자식이 받는 유전자는 parent1
+        # 다만 교차 포인트에 다다르면, 다른 parent 유전자 정보를 받아오기 시작한다. (parent = parent2)
+        parent = parents[0]
+
+        for i in range(gene_len):
+            # 자식 유전자 정보는 부모 유전자에서 받아온다
+            gene_data[i] = parent.gene_data[i]
+
+            if i in switch_point:
+                # 유전자를 받아오는 부모 변경
+                try:
+                    parent = parents[parents.index(parent) + 1]
+                except IndexError:
+                    parent = parents[0]
+
+                """
+                a = parents.index(parent) --> 현재 부모의 index 값
+                parents[a+1] --> 부모 리스트에서, 현재 부모 인덱스값보다 +1 된 값 가져옴
+                IndexError --> 만약 1이 넘어가면
+                parent = parents[0] 다시 0으로 돌아옴
+                """
+
+        return DNA(gene_data)
+
 
 class DNA:
     def __init__(self, gene_data=None):
@@ -68,52 +111,6 @@ class DNA:
 
         return score
 
-    @staticmethod
-    def make_child(parent1, parent2):
-        """
-        :param parent1: Parent Gene Object
-        :param parent2: Parnet Gene Object
-        :return: Child Gene Object
-        """
-
-        # 자식 유전자
-        gene_data = list()
-
-        # 두 부모를 튜플로 정의
-        parents = (parent1, parent2)
-
-        # 유전자 정보 길이
-        gene_len = len(parent1.gene_data)
-
-        # 각 교차 포인트를 정한다.
-        # rand 함수의 반환이 float 형이므로, 소수점을 버리기 위해 int() 형변한을 해준다.
-        switch_point = (rand(1, gene_len), rand(2, gene_len))
-
-        # 처음 자식이 받는 유전자는 parent1
-        # 다만 교차 포인트에 다다르면, 다른 parent 유전자 정보를 받아오기 시작한다. (parent = parent2)
-        parent = parent1
-
-        for i in range(gene_len):
-            # 자식 유전자 정보는 부모 유전자에서 받아온다
-            gene_data[i] = parent.gene_data[i]
-
-            if i in switch_point:
-                # 유전자를 받아오는 부모 변경
-                try:
-                    parent = parents[parents.index(parent) + 1]
-                except IndexError:
-                    parent = parents[0]
-
-                """
-                a = parents.index(parent) --> 현재 부모의 index 값
-                parents[a+1] --> 부모 리스트에서, 현재 부모 인덱스값보다 +1 된 값 가져옴
-                IndexError --> 만약 1이 넘어가면
-                parent = parents[0] 다시 0으로 돌아옴
-                """
-
-        return DNA(gene_data)
-
 
 if __name__ == '__main__':
-
     print(1)
