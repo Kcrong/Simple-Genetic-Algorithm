@@ -100,7 +100,9 @@ class Generation:
     def evolution(self):
         print("Start Evolution Generation level %d" % Generation.cnt)
 
-        dna_list = [self.best for i in range(5)]
+        # 우월 유전자 보존 갯수
+        good_dna_cnt = 10
+        dna_list = [self.best for i in range(good_dna_cnt)]
         dna_list += [self.make_child() for i in range(len(self.DNA_list) - len(dna_list))]
 
         return Generation(dna_list)
@@ -159,7 +161,7 @@ def visualization(generations):
     xlim([0, len(generations)])
 
     # 축의 lim 값을 데이터 보다 높게 잡아줌으로써, 그래프의 가독성을 높임
-    ylim([int(min(fitness_list)), int(max(fitness_list) * 1.2)])
+    ylim([int(min(fitness_list)), (DNA.max_fitness() * 1.2)])
 
     xlabel('Generation')
     ylabel('Fitness Score')
