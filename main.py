@@ -54,7 +54,8 @@ class Generation:
 
         # 돌연변이 확률은 fitness 와 반비례 한다.
         # fitness 가 높을 수록, 돌연변이 확률이 적어진다.
-        if rand(0, self.fitness * 10) == 0:
+        mutation_probability = 100
+        if rand(0, self.fitness * mutation_probability) == 0:
             return DNA([rand(min(WE_WANT), max(WE_WANT)) for i in range(len(WE_WANT))])
 
         # 부모를 select_list 를 이용해 정함.
