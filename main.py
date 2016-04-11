@@ -188,6 +188,7 @@ if __name__ == '__main__':
             # 적합도가 최대일 경우, 반복문 종료
             if next_generation.fitness >= DNA.max_fitness():
                 break
+            i += 1
         except KeyboardInterrupt:
             break
 
