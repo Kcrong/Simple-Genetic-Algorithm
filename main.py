@@ -176,13 +176,19 @@ if __name__ == '__main__':
     # 첫 세대 (조상 세대)
     Generations.append(Generation([DNA() for i in range(100)]))
 
-    # 진화 횟수
-    evolution_cnt = 100
-    for i in range(evolution_cnt):
-        next_generation = Generations[i].evolution()
-        Generations.append(next_generation)
-        print("Fitness: %d" % next_generation.fitness)
-        print("Best DNA: %s" % next_generation.best)
+    i = 0
+    while True:
+        try:
+            next_generation = Generations[i].evolution()
+            Generations.append(next_generation)
+            print("Fitness: %d" % next_generation.fitness)
+            print("Best DNA: %s" % next_generation.best)
+
+            # 적합도가 최대일 경우, 반복문 종료
+            if next_generation.fitness >= DNA.max_fitness():
+                break
+        except KeyboardInterrupt:
+            break
 
     print("Last Generation's Best DNA: %s" % Generations[-1].best)
 
