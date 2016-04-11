@@ -15,11 +15,11 @@ def rand(x, y): return int(uniform(x, y))
 WE_WANT = [0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0]
 
 # 우월 유전자 보존 갯수
-GOOD_DNA_CNT = 10
+GOOD_DNA_CNT = 5
 
 # 돌연변이 확률은 fitness 와 반비례 한다.
 # fitness 가 높을 수록, 돌연변이 확률이 적어진다.
-MUTATION_PROBABILITY = 100
+MUTATION_PROBABILITY = 10
 
 
 class Generation:
