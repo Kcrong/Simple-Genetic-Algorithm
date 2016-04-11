@@ -100,7 +100,7 @@ class Generation:
     def evolution(self):
         print("Start Evolution Generation level %d" % Generation.cnt)
 
-        dna_list = [self.best for i in range(10)]
+        dna_list = [self.best for i in range(5)]
         dna_list += [self.make_child() for i in range(len(self.DNA_list) - len(dna_list))]
 
         return Generation(dna_list)
