@@ -6,3 +6,5 @@
 - 룰렛휠 선택   
 - 2점 교차연산  
 - 0.01%의 변이확률  
+
+결과 분석: http://blog.kim82536.pe.kr/entry/%EC%9C%A0%EC%A0%84-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98-%EA%B0%80%EC%A7%80%EA%B3%A0-%EB%86%80%EA%B8%B0  
