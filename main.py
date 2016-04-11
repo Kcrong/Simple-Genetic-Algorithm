@@ -12,10 +12,8 @@ def rand(x, y): return int(uniform(x, y))
 
 
 # 원하는 값
-WE_WANT = [0, 3, 7, 20, 8, 1, 5, 1, 2, 0, 1, 0, 1, 0]
-
-
-# WE_WANT = [rand(0, 100) for i in range(10)]
+# WE_WANT = [0, 3, 7, 20, 8, 1, 5, 1, 2, 0, 1, 0, 1, 0]
+WE_WANT = [rand(0, 100) for i in range(10)]
 
 
 class Generation:
@@ -142,8 +140,11 @@ def visualization(generations):
     plot([generation.fitness for generation in generations])
 
     # 각 축의 lim 값을 데이터 보다 높게 잡아줌으로써, 가독성을 높임
-    xlim([0, int(len(generations) * 1.2)])  # 세대 수 + 20%
-    ylim([0, int(max([generation.best.fitness for generation in generations]) * 1.2)])  # 가장 높은 적합도 + 20%
+    xlim([0, int(len(generations) * 1.01)])  # 세대 수 + 1%
+
+    fitness_list = [generation.fitness for generation in generations]
+
+    ylim([int(min(fitness_list)), int(max(fitness_list) * 1.01)])  # 가장 높은 적합도 + 1%
 
     xlabel('Generation')
     ylabel('Fitness Score')
@@ -165,27 +166,6 @@ if __name__ == '__main__':
         print("Fitness: %d" % next_generation.fitness)
         print("Best DNA: %s" % next_generation.best)
 
-        # fitness 가 만족할 정도 일 경우
-        if next_generation.fitness <= len(WE_WANT) - 1:
-            break
-
     print("Last Generation's Best DNA: %s" % Generations[-1].best)
 
     visualization(Generations)
-
-    print(1)
-
-"""
-적합도
-
-8 |
-7 |
-6 |
-5 |
-4 |
-3 |
-2 |
-1 |
-  -----------------
-    1 2 3 4 5 6 7 8  --> 세대
-"""
