@@ -150,16 +150,16 @@ class DNA:
 
 
 def visualization(generations):
-    xlim([0, len(generations)])
-
     fitness_list = [generation.fitness for generation in generations]
-
-    # 축의 lim 값을 데이터 보다 높게 잡아줌으로써, 가독성을 높임
-    ylim([int(min(fitness_list)), int(max(fitness_list) * 1.2)])
 
     # 최대 적합도를 그래프에 나타냄
     max_fitness = DNA.max_fitness()
     plot([max_fitness for i in range(len(generations))])
+
+    xlim([0, len(generations)])
+
+    # 축의 lim 값을 데이터 보다 높게 잡아줌으로써, 그래프의 가독성을 높임
+    ylim([int(min(fitness_list)), int(max(fitness_list) * 1.2)])
 
     xlabel('Generation')
     ylabel('Fitness Score')
