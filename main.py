@@ -3,28 +3,32 @@ Author Kcrong
 """
 from random import uniform
 
+from matplotlib.pyplot import plot, show, xlim, ylim, xlabel, ylabel
+from numpy import mean
+
 
 # According to PEP8, do not assign lambda
 def rand(x, y): return int(uniform(x, y))
 
 
 # 원하는 값
-WE_WANT = [0, 0, 0, 0, 1, 1, 1, 1]
+WE_WANT = [0, 3, 7, 20, 8, 1, 5, 1, 2, 0, 1, 0, 1, 0]
+
+
+# WE_WANT = [rand(0, 100) for i in range(10)]
 
 
 class Generation:
     cnt = 0
 
-    def __new__(cls, *args, **kwargs):
-        cls.cnt += 1
-
     def __init__(self, dna_list):
+        Generation.cnt += 1
         self.generation_level = Generation.cnt
-        self.generation = dna_list
+        self.DNA_list = dna_list
         self.select_list = self.make_select_list()
 
     def __repr__(self):
-        return "<Generation %d>" % self.generation_level
+        return "<Generation level %d>" % self.generation_level
 
     def make_select_list(self):
         """
@@ -37,7 +41,7 @@ class Generation:
 
         tmp_list = list()
 
-        for dna in self.generation:
+        for dna in self.DNA_list:
             tmp_list += [dna for i in range(dna.fitness)]
 
         return tmp_list
@@ -47,9 +51,14 @@ class Generation:
         :return: Child Gene Object
         """
 
+        # 돌연변이 확률은 fitness 와 반비례 한다.
+        # fitness 가 높을 수록, 돌연변이 확률이 적어진다.
+        if rand(0, self.fitness * 100) == 0:
+            return DNA([rand(min(WE_WANT), max(WE_WANT)) for i in range(len(WE_WANT))])
+
         # 부모를 select_list 를 이용해 정함.
         # 부모로 선출될 확률은 fitness 과 비례한다.
-        parents = (self.select_list[rand(0, len(self.select_list))] for i in range(2))
+        parents = tuple(self.select_list[rand(0, len(self.select_list))] for i in range(2))
 
         # 자식 유전자
         gene_data = list()
@@ -59,7 +68,7 @@ class Generation:
 
         # 각 교차 포인트를 정한다.
         # rand 함수의 반환이 float 형이므로, 소수점을 버리기 위해 int() 형변한을 해준다.
-        switch_point = (rand(1, gene_len), rand(2, gene_len))
+        switch_point = (rand(1, gene_len // 2), rand(gene_len // 2, gene_len))
 
         # 처음 자식이 받는 유전자는 parent1
         # 다만 교차 포인트에 다다르면, 다른 parent 유전자 정보를 받아오기 시작한다. (parent = parent2)
@@ -67,7 +76,7 @@ class Generation:
 
         for i in range(gene_len):
             # 자식 유전자 정보는 부모 유전자에서 받아온다
-            gene_data[i] = parent.gene_data[i]
+            gene_data.append(parent.gene_data[i])
 
             if i in switch_point:
                 # 유전자를 받아오는 부모 변경
@@ -83,14 +92,29 @@ class Generation:
                 parent = parents[0] 다시 0으로 돌아옴
                 """
 
-        return DNA(gene_data)
+        # return DNA(gene_data)
+        dna = DNA(gene_data)
+        return dna
+
+    def evolution(self):
+        print("Start Evolution Generation level %d" % Generation.cnt)
+        return Generation([self.make_child() for i in range(len(self.DNA_list))])
+
+    @property
+    def fitness(self):
+        # 세대 객체의 평균 적합도
+        return mean([dna.fitness for dna in self.DNA_list])
+
+    @property
+    def best(self):
+        return sorted(self.DNA_list, key=lambda x: x.fitness, reverse=True)[0]
 
 
 class DNA:
     def __init__(self, gene_data=None):
         # 유전자 정보
         if gene_data is None:
-            self.gene_data = [rand(0, 2) for i in range(len(WE_WANT))]
+            self.gene_data = [rand(min(WE_WANT), max(WE_WANT) + 1) for i in range(len(WE_WANT))]
         else:
             self.gene_data = gene_data
 
@@ -101,16 +125,67 @@ class DNA:
     def fitness(self) -> int:
         """
         적합도 계산 함수
-        :return: 0 ~ len(data) 사이의 적합도 값
+        :return: 적합도 값
         """
-        score = 0
+
+        score = len(WE_WANT) * (max(WE_WANT)//2)
 
         for gene, want in zip(self.gene_data, WE_WANT):
-            if gene == want:
-                score += 1
+            if gene != want:
+                score -= abs(gene - want)
 
         return score
 
 
+def visualization(generations):
+    # 각 세대의 (평균) 적합도를 이용해 시각화
+    plot([generation.fitness for generation in generations])
+
+    # 각 축의 lim 값을 데이터 보다 높게 잡아줌으로써, 가독성을 높임
+    xlim([0, int(len(generations) * 1.2)])  # 세대 수 + 20%
+    ylim([0, int(max([generation.best.fitness for generation in generations]) * 1.2)])  # 가장 높은 적합도 + 20%
+
+    xlabel('Generation')
+    ylabel('Fitness Score')
+
+    show()
+
+
 if __name__ == '__main__':
+    Generations = list()
+
+    # 첫 세대 (조상 세대)
+    Generations.append(Generation([DNA() for i in range(100)]))
+
+    # 진화 횟수
+    evolution_cnt = 100
+    for i in range(evolution_cnt):
+        next_generation = Generations[i].evolution()
+        Generations.append(next_generation)
+        print("Fitness: %d" % next_generation.fitness)
+        print("Best DNA: %s" % next_generation.best)
+
+        # fitness 가 만족할 정도 일 경우
+        if next_generation.fitness <= len(WE_WANT) - 1:
+            break
+
+    print("Last Generation's Best DNA: %s" % Generations[-1].best)
+
+    visualization(Generations)
+
     print(1)
+
+"""
+적합도
+
+8 |
+7 |
+6 |
+5 |
+4 |
+3 |
+2 |
+1 |
+  -----------------
+    1 2 3 4 5 6 7 8  --> 세대
+"""
