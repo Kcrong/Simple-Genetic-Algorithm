@@ -46,7 +46,7 @@ class Generation:
         tmp_list = list()
 
         for dna in self.DNA_list:
-            tmp_list += [dna for i in range(dna.fitness)]
+            tmp_list += [dna for _ in range(dna.fitness)]
 
         return tmp_list
 
@@ -56,11 +56,11 @@ class Generation:
         """
 
         if rand(0, self.fitness * MUTATION_PROBABILITY) == 0:
-            return DNA([rand(min(WE_WANT), max(WE_WANT)) for i in range(len(WE_WANT))])
+            return DNA([rand(min(WE_WANT), max(WE_WANT)) for _ in range(len(WE_WANT))])
 
         # 부모를 select_list 를 이용해 정함.
         # 부모로 선출될 확률은 fitness 과 비례한다.
-        parents = tuple(self.select_list[rand(0, len(self.select_list))] for i in range(2))
+        parents = tuple(self.select_list[rand(0, len(self.select_list))] for _ in range(2))
 
         # 자식 유전자
         gene_data = list()
@@ -76,7 +76,7 @@ class Generation:
         # 다만 교차 포인트에 다다르면, 다른 parent 유전자 정보를 받아오기 시작한다. (parent = parent2)
         parent = parents[0]
 
-        for i in range(gene_len):
+        for _ in range(gene_len):
             # 자식 유전자 정보는 부모 유전자에서 받아온다
             gene_data.append(parent.gene_data[i])
 
@@ -101,8 +101,8 @@ class Generation:
     def evolution(self):
         print("Start Evolution Generation level %d" % Generation.cnt)
 
-        dna_list = [self.best for i in range(GOOD_DNA_CNT)]
-        dna_list += [self.make_child() for i in range(len(self.DNA_list) - len(dna_list))]
+        dna_list = [self.best for _ in range(GOOD_DNA_CNT)]
+        dna_list += [self.make_child() for _ in range(len(self.DNA_list) - len(dna_list))]
 
         return Generation(dna_list)
 
@@ -120,7 +120,7 @@ class DNA:
     def __init__(self, gene_data=None):
         # 유전자 정보
         if gene_data is None:
-            self.gene_data = [rand(min(WE_WANT), max(WE_WANT) + 1) for i in range(len(WE_WANT))]
+            self.gene_data = [rand(min(WE_WANT), max(WE_WANT) + 1) for _ in range(len(WE_WANT))]
         else:
             self.gene_data = gene_data
 
@@ -155,7 +155,7 @@ def visualization(generations):
 
     # 최대 적합도를 그래프에 나타냄
     max_fitness = DNA.max_fitness()
-    plot([max_fitness for i in range(len(generations))])
+    plot([max_fitness for _ in range(len(generations))])
 
     xlim([0, len(generations)])
 
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     Generations = list()
 
     # 첫 세대 (조상 세대)
-    Generations.append(Generation([DNA() for i in range(100)]))
+    Generations.append(Generation([DNA() for _ in range(100)]))
 
     i = 0
     while True:
