@@ -180,6 +180,7 @@ def visualization(generations):
     show()
 
 
+# 최대 적합도
 MAX_FITNESS = DNA.max_fitness()
 
 # Graph Width
@@ -188,22 +189,36 @@ MAX_X = 100
 # Graph Height
 MAX_Y = MAX_FITNESS + 5
 
+# 세대 리스트
 GENERATION_LIST = list()
 
+# 기본 라인
 line = deque([0], maxlen=MAX_X)
 
 
 def go_next_generation(fn, l2d):
+    # 세대 리스트에서 가장 마지막 세대를 진화시키고, 그 세대를 next_generation 에 저장
     next_generation = GENERATION_LIST[-1].evolution()
+
+    # 세대 리스트에 진화된 세대 저장
     GENERATION_LIST.append(next_generation)
+
+    # 진화 세대의 적합도 저장
     next_fitness = next_generation.fitness
+
+    # 안내 출력
     print("%s %s" % (repr(next_generation), next_fitness))
+
+    # 그리는 라인(리스트) 에 다음 세대 적합도 추가
     line.append(next_fitness)
 
-    plot([DNA.max_fitness()] * MAX_X, color='red')
+    # 최대 적합도 그래프에 그림
+    plot([MAX_FITNESS] * MAX_X, color='red')
 
+    # 다음 세대 적합도가 저장된 라인 그리기
     l2d.set_data(range(0, len(line)), line)
 
+    # 세대가 목표값에 도달한 경우, 종료
     if next_fitness >= MAX_FITNESS:
         raise FinishEvolution
 
@@ -213,7 +228,6 @@ if __name__ == '__main__':
     GENERATION_LIST.append(Generation([DNA() for _ in range(100)]))
 
     fig = figure()
-    # a = axes(xlim=(-(MAX_X / 2), MAX_X / 2), ylim=(-(MAX_Y / 2), MAX_Y / 2))
 
     l1, = axes(xlim=(0, MAX_X), ylim=(0, MAX_Y)).plot([], [])
     ani = FuncAnimation(fig, go_next_generation, fargs=(l1,), interval=50)
