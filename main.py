@@ -78,7 +78,7 @@ class Generation:
 
         for _ in range(gene_len):
             # 자식 유전자 정보는 부모 유전자에서 받아온다
-            gene_data.append(parent.gene_data[i])
+            gene_data.append(parent.gene_data[_])
 
             if i in switch_point:
                 # 유전자를 받아오는 부모 변경
