@@ -3,7 +3,11 @@ Author Kcrong
 """
 from random import uniform
 
-from matplotlib.pyplot import plot, show, xlim, ylim, xlabel, ylabel
+from matplotlib.pyplot import plot, show, xlim, ylim, xlabel, ylabel, figure, axes
+from matplotlib.animation import FuncAnimation
+
+from collections import deque
+
 from numpy import mean
 
 
@@ -20,6 +24,11 @@ GOOD_DNA_CNT = 5
 # 돌연변이 확률은 fitness 와 반비례 한다.
 # fitness 가 높을 수록, 돌연변이 확률이 적어진다.
 MUTATION_PROBABILITY = 10
+
+
+class FinishEvolution(Exception):
+    def __str__(self):
+        return "유전자 데이터가 목표값과 일치합니다."
 
 
 class Generation:
@@ -80,7 +89,7 @@ class Generation:
             # 자식 유전자 정보는 부모 유전자에서 받아온다
             gene_data.append(parent.gene_data[_])
 
-            if i in switch_point:
+            if _ in switch_point:
                 # 유전자를 받아오는 부모 변경
                 try:
                     parent = parents[parents.index(parent) + 1]
@@ -171,27 +180,42 @@ def visualization(generations):
     show()
 
 
+MAX_FITNESS = DNA.max_fitness()
+
+# Graph Width
+MAX_X = 100
+
+# Graph Height
+MAX_Y = MAX_FITNESS + 5
+
+GENERATION_LIST = list()
+
+line = deque([0], maxlen=MAX_X)
+
+
+def go_next_generation(fn, l2d):
+    next_generation = GENERATION_LIST[-1].evolution()
+    GENERATION_LIST.append(next_generation)
+    next_fitness = next_generation.fitness
+    print("%s %s" % (repr(next_generation), next_fitness))
+    line.append(next_fitness)
+
+    plot([DNA.max_fitness()] * MAX_X, color='red')
+
+    l2d.set_data(range(0, len(line)), line)
+
+    if next_fitness >= MAX_FITNESS:
+        raise FinishEvolution
+
+
 if __name__ == '__main__':
-    Generations = list()
+    # 조상 세대 리스트에 추가
+    GENERATION_LIST.append(Generation([DNA() for _ in range(100)]))
 
-    # 첫 세대 (조상 세대)
-    Generations.append(Generation([DNA() for _ in range(100)]))
+    fig = figure()
+    # a = axes(xlim=(-(MAX_X / 2), MAX_X / 2), ylim=(-(MAX_Y / 2), MAX_Y / 2))
 
-    i = 0
-    while True:
-        try:
-            next_generation = Generations[i].evolution()
-            Generations.append(next_generation)
-            print("Fitness: %d" % next_generation.fitness)
-            print("Best DNA: %s" % next_generation.best)
+    l1, = axes(xlim=(0, MAX_X), ylim=(0, MAX_Y)).plot([], [])
+    ani = FuncAnimation(fig, go_next_generation, fargs=(l1,), interval=50)
 
-            # 적합도가 최대일 경우, 반복문 종료
-            if next_generation.fitness >= DNA.max_fitness():
-                break
-            i += 1
-        except KeyboardInterrupt:
-            break
-
-    print("Last Generation's Best DNA: %s" % Generations[-1].best)
-
-    visualization(Generations)
+    show()
