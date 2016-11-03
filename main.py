@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Author Kcrong
 """
@@ -144,7 +145,7 @@ class DNA:
             return len(WE_WANT) * (max(WE_WANT) // 2)
 
     @property
-    def fitness(self) -> int:
+    def fitness(self):
         """
         적합도 계산 함수
         :return: 적합도 값
@@ -196,7 +197,7 @@ GENERATION_LIST = list()
 line = deque([0], maxlen=MAX_X)
 
 
-def go_next_generation(fn, l2d):
+def go_next_generation(_, l2d):
     # 세대 리스트에서 가장 마지막 세대를 진화시키고, 그 세대를 next_generation 에 저장
     next_generation = GENERATION_LIST[-1].evolution()
 
