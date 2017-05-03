@@ -3,6 +3,7 @@
 Author Kcrong
 """
 from random import uniform
+from random import randrange
 
 from matplotlib.pyplot import plot, show, xlim, ylim, xlabel, ylabel, figure, axes
 from matplotlib.animation import FuncAnimation
@@ -18,7 +19,7 @@ def rand(x, y): return int(uniform(x, y))
 
 # 원하는 값
 # WE_WANT = [0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0]
-WE_WANT = [random.randrange(0, 5) for _ in range(15)]
+WE_WANT = [randrange(0, 5) for _ in range(15)]
 
 # 우월 유전자 보존 갯수
 GOOD_DNA_CNT = 5
