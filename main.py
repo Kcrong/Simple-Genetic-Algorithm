@@ -3,6 +3,7 @@
 Author Kcrong
 """
 from random import uniform
+from random import randrange
 
 from matplotlib.pyplot import plot, show, xlim, ylim, xlabel, ylabel, figure, axes
 from matplotlib.animation import FuncAnimation
@@ -17,7 +18,8 @@ def rand(x, y): return int(uniform(x, y))
 
 
 # 원하는 값
-WE_WANT = [0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0]
+# WE_WANT = [0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0]
+WE_WANT = [randrange(0, 5) for _ in range(15)]
 
 # 우월 유전자 보존 갯수
 GOOD_DNA_CNT = 5
@@ -185,7 +187,7 @@ def visualization(generations):
 MAX_FITNESS = DNA.max_fitness()
 
 # Graph Width
-MAX_X = 100
+MAX_X = 100000
 
 # Graph Height
 MAX_Y = MAX_FITNESS + 5
@@ -212,6 +214,8 @@ def go_next_generation(_, l2d):
 
     # 그리는 라인(리스트) 에 다음 세대 적합도 추가
     line.append(next_fitness)
+
+    xlim([0, len(GENERATION_LIST)])
 
     # 최대 적합도 그래프에 그림
     plot([MAX_FITNESS] * MAX_X, color='red')
